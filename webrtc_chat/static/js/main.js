@@ -1,1 +1,3 @@
-console.log('Main.js!')
+console.log('Main.js!');
+
+var labelUsername = document.querySelector('#label-username');
