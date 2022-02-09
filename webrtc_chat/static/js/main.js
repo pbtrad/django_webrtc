@@ -79,4 +79,15 @@ var userMedia = navigator.mediaDevices.getUserMedia(constraints)
     })
     .catch(error => {
         console.log('Error accessing media devices.', error);
-    })
+    });
+
+
+function sendSignal(action, message){
+    var jsonStr = JSON.stringify({
+        'peer': username,
+        'action': action,
+        'message': message,
+    });
+
+    webSocket.send(jsonStr);
+}
