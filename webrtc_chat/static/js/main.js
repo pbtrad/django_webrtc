@@ -46,6 +46,12 @@ btnJoin.addEventListener('click', ()=> {
 
     webSocket.addEventListener('open', (e) => {
         console.log('Connection Opened!');
+
+        var jsonStr = JSON.stringify({
+            'message': 'This is a message',
+        });
+
+        webSocket.send(jsonStr);
     });
     webSocket.addEventListener('message', webSocketonMessage);
     webSocket.addEventListener('close', (e) => {
@@ -55,3 +61,22 @@ btnJoin.addEventListener('click', ()=> {
         console.log('Error Occurred!')
     });
 });
+
+var localStream = new MediaStream();
+
+const constraints = {
+    'video': true,
+    'audio': true
+};
+
+const localVideo = document.querySelector('#local-video');
+
+var userMedia = navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+        localStream = stream;
+        localVideo.srcObject = localStream;
+        localVideo.muted = true;
+    })
+    .catch(error => {
+        console.log('Error accessing media devices.', error);
+    })
