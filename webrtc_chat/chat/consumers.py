@@ -23,6 +23,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive(self, text_data):
         receive_dict = json.loads(text_data)
         message = receive_dict['message']
+        action = receive_dict['action']
+
+        if (action == 'new-offer') or (action == 'new-answer'):
+
+            return
 
         receive_dict['message']['receiver_channel_name'] = self.channel_name
 
