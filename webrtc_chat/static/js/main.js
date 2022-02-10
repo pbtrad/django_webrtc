@@ -338,7 +338,7 @@ function getDataChannels(){
     var dataChannels = [];
 
     for(peerUsername in mapPeers){
-        var dataChannels = mapPeers[peerUsername][1];
+        var dataChannel = mapPeers[peerUsername][1];
 
         dataChannels.push(dataChannel);
     }
