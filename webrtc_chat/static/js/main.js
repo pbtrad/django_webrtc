@@ -33,6 +33,16 @@ function webSocketonMessage(event){
 
         return;
     }
+
+    if(action == 'new-answer'){
+        var answer = parsedData['message']['sdp'];
+
+        var peer = mapPeers[peerUsername][0];
+
+        peer.setRemoteDescription(answer);
+
+        return;
+    }
 }
 
 btnJoin.addEventListener('click', ()=> {
@@ -89,11 +99,45 @@ const constraints = {
 
 const localVideo = document.querySelector('#local-video');
 
+const btnToggleAudio = document.querySelector('#btn-toggle-audio');
+
+const btnToggleVideo = document.querySelector('#btn-toggle-video');
+
 var userMedia = navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
         localStream = stream;
         localVideo.srcObject = localStream;
         localVideo.muted = true;
+
+        var audioTracks = stream.getAudioTracks();
+        var videoTracks = stream.getVideoTracks();
+
+        audioTracks[0].enabled = true;
+        videoTracks[0].enabled = true;
+
+        btnToggleAudio.addEventListener('click', () => {
+            audioTracks[0].enabled = !audioTracks[0].enabled;
+
+            if(audioTracks[0].enabled){
+                btnToggleAudio.innerHTML = 'Audio Mute';
+
+                return;
+            }
+
+            btnToggleAudio.innerHTML = 'Audio Unmute';
+        });
+
+        btnToggleVideo.addEventListener('click', () => {
+            videoTracks[0].enabled = !videoTracks[0].enabled;
+
+            if(videoTracks[0].enabled){
+                btnToggleVideo.innerHTML = 'Video off';
+
+                return;
+            }
+
+            btnToggleVideo.innerHTML = 'Video On';
+        });
     })
     .catch(error => {
         console.log('Error accessing media devices.', error);
@@ -203,8 +247,15 @@ function createAnswerer(offer, peerUsername, receiver_channel_name){
     });
 
     peer.setRemoteDescription(offer)
-    then(() => {
+    .then(() => {
         console.log('Remote description set successfully for %s.', peerUsername)
+
+        return peer.createAnswer();
+    })
+    .then(a => {
+        console.log('Answer created!')
+
+        peer.setLocalDescription(a);
     })
 }
 
